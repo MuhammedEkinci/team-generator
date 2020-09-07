@@ -9,27 +9,46 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Choices = require("inquirer/lib/objects/choices");
+const Choice = require("inquirer/lib/objects/choice");
 
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 function getEmployeeInfo() {
-    inquirer
-        .prompt({
-            type: "input",
-            name: "employee",
-            message: "Are you an Engineer, Intern, or Manager?"
-        })
-        .then(val => {
-            console.log(val.employee);
-        });
+    return inquirer
+            .prompt({
+                type: "list",
+                name: "employee",
+                message: "Are you an Engineer, Intern, or Manager?",
+                choices: ['Engineer', 'Manager', 'Intern'],
+            })
+            .then(answer => {
+                if(answer.employee == "Engineer") {
+                    return addEngineer(answer);
+                }
+                else if(answer.employee == "Intern") {
+                    return addIntern(answer);
+                }
+                else if(answer.employee == "Manager") {
+                    return addManager(answer);
+                }
+            })
+            .catch(function(err) {
+                console.log("Wrong job position!!");
+                console.log(err);
+            });
 }
 
+getEmployeeInfo();
+
+
+//
 function addManager() {
     inquirer
         .prompt({
             type: "input",
-            name: "employee",
+            name: "manager",
             message: "Are you an Engineer, Intern, or Manager?"
         })
     }
@@ -39,10 +58,13 @@ function addIntern() {
 }
 
 function addEngineer() {
-    console.log("hello");
+    inquirer
+        .prompt({
+            type: "input",
+            name: "Engineer",
+            message: "what is your github?"
+        })
 }
-
-getEmployeeInfo();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
