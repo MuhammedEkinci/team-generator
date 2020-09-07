@@ -17,12 +17,30 @@ const Choice = require("inquirer/lib/objects/choice");
 // and to create objects for each team member (using the correct classes as blueprints!)
 function getEmployeeInfo() {
     return inquirer
-            .prompt({
+            .prompt([
+                
+            {
                 type: "list",
                 name: "employee",
                 message: "Are you an Engineer, Intern, or Manager?",
                 choices: ['Engineer', 'Manager', 'Intern'],
-            })
+            }, 
+            {
+            type: "input",
+                name: "name",
+                message: "Input your name?"
+            },
+            {
+                type: "input",
+                name: "id",
+                message: "input work id?"   
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "input email?"
+            }
+        ])
             .then(answer => {
                 if(answer.employee == "Engineer") {
                     return addEngineer(answer);
@@ -45,12 +63,12 @@ getEmployeeInfo();
 
 //
 function addManager() {
-    inquirer
-        .prompt({
-            type: "input",
-            name: "manager",
-            message: "Are you an Engineer, Intern, or Manager?"
-        })
+    return inquirer
+            .prompt({
+                type: "input",
+                name: "manager",
+                message: "Are you an Engineer, Intern, or Manager?"
+            })
     }
 
 function addIntern() {
@@ -58,7 +76,7 @@ function addIntern() {
 }
 
 function addEngineer() {
-    inquirer
+   return inquirer
         .prompt({
             type: "input",
             name: "Engineer",
