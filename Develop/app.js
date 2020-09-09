@@ -9,8 +9,11 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const Choices = require("inquirer/lib/objects/choices");
-const Choice = require("inquirer/lib/objects/choice");
+//const Choices = require("inquirer/lib/objects/choices");
+//const Choice = require("inquirer/lib/objects/choice");
+
+//global array to hold team info
+const group = [];
 
 
 // Write code to use inquirer to gather information about the development team members,
@@ -18,7 +21,7 @@ const Choice = require("inquirer/lib/objects/choice");
 function getEmployeeInfo() {
     return inquirer
             .prompt([
-                
+
             {
                 type: "list",
                 name: "employee",
@@ -62,31 +65,88 @@ getEmployeeInfo();
 
 
 //
-function addManager() {
+function addManager(val) {
     return inquirer
-            .prompt({
+        .prompt([
+        {
+            type: "input",
+            name: "officeNumber",
+            message: "what is your officeNumber?"
+        }
+    ]).then(answer => {
+        let manager = new Manager(val.name, val.id, val.email, answer.officeNumber);
+        group.push(manager);
+        console.log("added manager");
+        console.log(group);
+        addEmployee();
+    })
+}
+function addIntern(val) {
+        return inquirer
+            .prompt([
+            {
                 type: "input",
-                name: "manager",
-                message: "Are you an Engineer, Intern, or Manager?"
-            })
-    }
-
-function addIntern() {
-    console.log("hello");
+                name: "school",
+                message: "what is your school name?"
+            }
+        ]).then(answer => {
+            let intern = new Intern(val.name, val.id, val.email, answer.school);
+            group.push(intern);
+            console.log("added Intern");
+            console.log(group);
+            addEmployee();
+        })
 }
 
-function addEngineer() {
+function addEngineer(val) {
    return inquirer
-        .prompt({
+        .prompt([
+        {
             type: "input",
-            name: "Engineer",
+            name: "github",
             message: "what is your github?"
-        })
+        }
+    ]).then(answer => {
+        let engineer = new Engineer(val.name, val.id, val.email, answer.github);
+        group.push(engineer);
+        console.log("added engineer");
+        console.log(group);
+        addEmployee();
+    })
 }
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+function addEmployee() {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "confirm",
+                message: "Do you want to add another Employee",
+                choices: ["yes", "no"],
+            }
+        ]).then(function(answer) {
+            if(answer.confirm == "yes"){
+                getEmployeeInfo();
+            }
+            else
+            {
+                var html = render(group);
+
+                fs.writeFile(outputPath, html, function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+
+                    console.log("group Html was rendered!");
+                });
+            }
+            
+        });
+}
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
